@@ -1,17 +1,40 @@
 import tkinter as tk
 import time
 import math
-
+import ctypes
 
 class AnalogClock(tk.Tk):
     def __init__(self):
         super().__init__()
+
+        # Windows API Funktionen
+        self.user32 = ctypes.windll.user32
+        self.user32.SetProcessDPIAware()
+
+        # Fensterstil auf überlappendes Fenster setzen
+        self.attributes("-alpha", 0.7)  # Alpha-Kanal für Transparenz (0.0 - vollständig transparent, 1.0 - undurchsichtig)
+        self.overrideredirect(True)     # Entfernt den Fensterrahmen
+
         self.title("Analoguhr")
         self.geometry("300x350")
         self.canvas = tk.Canvas(self, width=300, height=350, bg="white")
         self.canvas.pack()
 
         self.draw_clock()
+
+        # Event-Bindings zum Verschieben des Fensters mit linker Maustaste
+        self.canvas.bind("<ButtonPress-1>", self.start_move)
+        self.canvas.bind("<B1-Motion>", self.on_move)
+
+    def start_move(self, event):
+        # Merke die Anfangsposition des Mauszeigers beim Klicken
+        self._drag_data = {"x": event.x, "y": event.y}
+
+    def on_move(self, event):
+        # Berechne die Verschiebung und ändere die Fensterposition entsprechend
+        x = self.winfo_x() - self._drag_data["x"] + event.x
+        y = self.winfo_y() - self._drag_data["y"] + event.y
+        self.geometry(f"+{x}+{y}")
 
     def draw_clock(self):
         self.canvas.delete("all")
