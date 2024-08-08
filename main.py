@@ -8,7 +8,7 @@ import math
 class AnalogClock(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Analoguhr")
+        self.title("Analoguhr beta 1")
         self.geometry("300x350")
         self.canvas = tk.Canvas(self, width=300, height=350, bg="white")
         self.canvas.pack()
